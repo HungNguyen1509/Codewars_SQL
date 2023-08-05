@@ -1,0 +1,10 @@
+SELECT em.id
+     , em.name
+     , COUNT(*) AS older_subordinate_count
+FROM employees em
+JOIN employees sub
+ON em.id = sub.manager_id
+WHERE sub.birthdate <= current_date - interval '60 years'
+GROUP BY em.name, em.id
+HAVING COUNT(*) >=2
+ORDER BY em.id DESC
