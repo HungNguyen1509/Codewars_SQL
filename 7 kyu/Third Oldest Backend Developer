@@ -1,0 +1,8 @@
+SELECT *
+FROM employees AS e1
+WHERE team = 'backend'
+  AND (
+    SELECT COUNT(DISTINCT birth_date)
+    FROM employees AS e2
+    WHERE e2.team = 'backend' AND e2.birth_date <= e1.birth_date
+  ) = 3
