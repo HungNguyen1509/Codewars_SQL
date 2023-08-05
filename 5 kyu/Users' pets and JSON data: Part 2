@@ -1,0 +1,13 @@
+SELECT LEFT(pets->>'name',1) AS first_letter
+       , COUNT(*) AS pet_count
+       , (SELECT 
+            STRING_AGG(name, ', ' ORDER BY id)
+          FROM UNNEST(ARRAY_AGG(DISTINCT ROW(id, info ->>'name'))) t(id int, name text)) user_names
+FROM 
+  users
+  , JSONB_ARRAY_ELEMENTS(info->'pets') AS pets
+GROUP BY 
+  first_letter
+ORDER BY 
+  pet_count DESC
+  , first_letter ASC
