@@ -1,0 +1,18 @@
+CREATE EXTENSION pg_trgm;
+CREATE INDEX prospects_name_idx ON prospects USING GIN(full_name gin_trgm_ops);
+SELECT
+  c.first_name
+  , c.last_name
+  , c.credit_limit AS old_limit
+  , MAX(p.credit_limit) AS new_limit
+FROM customers AS c
+JOIN prospects AS p ON c.credit_limit < p.credit_limit
+  AND p.full_name ILIKE concat('%', c.first_name, '%')
+  AND p.full_name ILIKE concat('%', c.last_name, '%')
+GROUP BY 
+  c.first_name
+  , c.last_name
+  , c.credit_limit
+ORDER BY 
+  c.first_name
+  , c.last_name
