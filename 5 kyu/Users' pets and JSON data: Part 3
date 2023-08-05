@@ -1,0 +1,17 @@
+SELECT 
+  CASE 
+    WHEN CAST((info ->>'age') AS INT) <= 30 THEN '18-30'
+    WHEN CAST((info ->>'age') AS INT) <= 45 THEN '31-45'
+    WHEN CAST((info ->>'age') AS INT) <= 60 THEN '46-60'
+    ELSE '61 and above'
+  END AS age_group
+  , ROUND(AVG(JSONB_ARRAY_LENGTH(info->'pets')),1) AS avg_pet_count
+  , (ARRAY_AGG((users.info ->>'name') ORDER BY JSONB_ARRAY_LENGTH(info->'pets') DESC, id))[1] AS max_pet_owner
+  , MAX(JSONB_ARRAY_LENGTH(info->'pets')) AS max_pet_count
+FROM 
+  users
+GROUP BY 
+  age_group
+ORDER BY
+  avg_pet_count DESC
+  , age_group
