@@ -1,7 +1,7 @@
 SELECT 
-    product_id,
-    COUNT(order_id) AS count,
-    ROUND(COUNT(order_id) * 100.0 / SUM(COUNT(order_id)) OVER(), 2) AS ratio
+    product_id
+    , COUNT(order_id) AS count
+    , ROUND(COUNT(order_id) * 100.0 / SUM(COUNT(order_id)) OVER(), 2) AS ratio
 FROM 
     orders
 GROUP BY 
