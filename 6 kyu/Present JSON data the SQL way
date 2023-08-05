@@ -1,0 +1,13 @@
+SELECT 
+  data ->> 'first_name' AS first_name
+  , data ->> 'last_name' AS last_name
+  , CAST (EXTRACT(YEAR FROM age(TO_DATE(data ->> 'date_of_birth','yyyy-mm-dd'))) AS INT) AS age
+  , CASE 
+      WHEN data ->> 'private' = 'true' THEN 'Hidden'
+      WHEN data ->> 'email_addresses' = '[]' THEN 'None'
+      ELSE data -> 'email_addresses' ->> 0
+    END AS email_address
+FROM users
+ORDER BY 
+  first_name
+  , last_name
