@@ -1,0 +1,26 @@
+WITH employees_ranked AS 
+(
+SELECT *
+     , RANK() OVER (ORDER BY birth_date) AS young
+     , RANK() OVER (ORDER BY birth_date DESC) AS old
+  FROM employees
+ WHERE team = 'backend'
+)
+, employees_ranked_with_pos AS
+(
+SELECT *
+     , 1+2* ROW_NUMBER() OVER(ORDER BY young) AS pos
+  FROM employees_ranked
+ WHERE young <= old
+ UNION ALL
+SELECT *
+     , 2* ROW_NUMBER() OVER(ORDER BY old)
+  FROM employees_ranked
+ WHERE young > old
+)
+SELECT employee_id
+     , full_name
+     , team
+     , birth_date
+FROM employees_ranked_with_pos
+ORDER BY pos
