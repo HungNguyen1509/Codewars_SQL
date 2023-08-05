@@ -1,0 +1,28 @@
+WITH RECURSIVE self_managers(id, name, manager_id, path, cycle) AS (
+  SELECT 
+    e1.id
+    , e1.name
+    , e1.manager_id 
+    , ARRAY[e1.id]
+    , false
+  FROM employees e1
+  UNION ALL
+  SELECT 
+    e2.id
+    , e2.name
+    , e2.manager_id 
+    , self_managers.path || e2.id, e2.id = ANY(self_managers.path)
+  FROM self_managers
+  JOIN employees e2 ON self_managers.id = e2.manager_id
+  WHERE NOT self_managers.cycle
+)
+SELECT 
+  id
+  , name
+  , path AS cycle 
+FROM self_managers WHERE cycle 
+GROUP BY 
+  id
+  , name
+  , path
+ORDER BY id
