@@ -1,0 +1,18 @@
+SELECT 
+       FILM_ID 
+       , TITLE
+       ,  SPECIAL_FEATURES
+  FROM FILM
+  WHERE
+  (
+    SELECT
+          UNNEST(special_features) AS feature --
+          , COUNT(*)
+    FROM film 
+    GROUP BY FEATURE
+    ORDER BY COUNT(*) DESC
+    LIMIT 1    )
+    =ANY(SPECIAL_FEATURES)
+ORDER BY
+        TITLE
+        , FILM_ID
