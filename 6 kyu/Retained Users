@@ -1,0 +1,22 @@
+WITH monthly_logins AS (
+  SELECT DISTINCT
+    user_id
+    , DATE_TRUNC('month', date) AS login_month
+  FROM logins
+)
+
+SELECT
+  TO_CHAR(m1.login_month, 'FMMonth, YYYY') AS month
+  , COUNT(DISTINCT m1.user_id) AS retained_users
+FROM
+  monthly_logins m1
+JOIN
+  monthly_logins m2
+ON
+  m1.user_id = m2.user_id
+AND
+  m1.login_month = m2.login_month + INTERVAL '1 month'
+GROUP BY
+  m1.login_month
+ORDER BY
+  m1.login_month
