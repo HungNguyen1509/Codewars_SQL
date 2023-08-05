@@ -1,0 +1,14 @@
+SELECT 
+  o.product_id
+  , p.product_name
+  , COUNT(*) AS count_orders
+FROM products p 
+  JOIN orders o
+  ON p.id = o.product_id
+GROUP BY
+  o.product_id
+  , p.product_name
+ORDER BY 
+  COUNT(*) DESC
+  , o.product_id DESC
+LIMIT 2
