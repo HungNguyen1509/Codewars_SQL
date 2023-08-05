@@ -1,0 +1,31 @@
+WITH intervals AS (
+    SELECT start
+          , start + INTERVAL '30 minute' AS END
+    FROM generate_series(
+        timestamp '2023-05-08 10:00:00' 
+        , timestamp '2023-05-08 22:00:00'  
+        , INTERVAL '30 minute'  
+    ) AS start
+), sales AS (
+   SELECT 
+       date_trunc('hour', timestamp)  + 
+         INTERVAL '30 minute' * FLOOR(date_part('minute', timestamp) / 30) AS interval_time
+       , COUNT(*) AS cnt
+       , SUM(amount) AS sales
+   FROM sales
+    WHERE timestamp 
+        BETWEEN timestamp '2023-05-08 10:00:00' AND timestamp '2023-05-08 22:30:00' 
+    GROUP BY interval_time   
+), total AS (
+    SELECT SUM(sales) AS total_sales FROM sales
+)
+SELECT
+    TO_CHAR(i.start, 'HH12:MI AM') || '-' || to_char(i.end, 'HH12:MI AM') AS "Time"
+    , COALESCE(s.cnt, 0) AS "Cnt"
+    , TO_CHAR(COALESCE(s.sales, 0), 'FM999999990.00')::MONEY AS "Sales"
+    , ROUND((COALESCE(s.sales, 0) / t.total_sales) * 100, 2) AS "%Sales"
+FROM intervals i
+LEFT JOIN sales s
+ON i.start = s.interval_time
+CROSS JOIN total t
+ORDER BY i.start
