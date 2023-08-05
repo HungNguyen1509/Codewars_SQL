@@ -1,0 +1,16 @@
+SELECT 
+  first_name || ' ' || last_name AS name
+  , rental_date AS date_rental_occurred
+  , COUNT(*) OVER(PARTITION BY period_id) AS consecutive_days
+FROM (SELECT 
+        customer_id
+        , rental_date
+        , SUM(CASE WHEN change THEN 1 ELSE 0 END) OVER (PARTITION BY customer_id ORDER BY rental_date) AS period_id
+      FROM (SELECT 
+              customer_id
+              , rental_date
+              , rental_date -1 <> LAG(rental_date) OVER (PARTITION BY customer_id ORDER BY rental_date) AS change
+            FROM (SELECT DISTINCT customer_id,CAST(rental_date AS DATE) FROM rental) t) t) t
+JOIN customer USING (customer_id)
+WHERE customer_id = 1
+ORDER BY date_rental_occurred
