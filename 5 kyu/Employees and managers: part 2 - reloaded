@@ -1,0 +1,14 @@
+CREATE OR REPLACE FUNCTION management_chain(emp_id INT) RETURNS TEXT[] AS $$
+DECLARE manager_id INT; name TEXT; chain TEXT[];
+BEGIN
+     WHILE (emp_id IS NOT NULL) LOOP
+           SELECT e.name, e.manager_id INTO name, manager_id FROM employees e WHERE e.id = emp_id;
+           chain := CONCAT(name, ' (', emp_id, ')') || chain;
+           emp_id := manager_id;
+      END LOOP;
+      RETURN chain;
+END $$ LANGUAGE PLPGSQL;
+
+SELECT id,name, COALESCE(ARRAY_TO_STRING(management_chain(manager_id), ' -> '),'') AS management_chain
+FROM employees
+ORDER BY id
