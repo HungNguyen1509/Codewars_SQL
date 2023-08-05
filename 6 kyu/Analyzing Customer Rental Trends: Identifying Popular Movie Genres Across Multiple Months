@@ -1,0 +1,19 @@
+SELECT 
+  name genre
+  , count(rental) AS total_rentals
+FROM category
+  JOIN film_category using(category_id)
+  JOIN inventory using(film_id)
+  JOIN rental using(inventory_id)
+WHERE customer_id IN (
+  SELECT customer_id
+  FROM rental
+  WHERE rental_date::date BETWEEN '2005-05-01'::date AND '2005-07-31'::date
+  GROUP BY customer_id
+  HAVING count(distinct extract(month from rental_date)) = 3
+)
+GROUP BY name
+ORDER BY 
+  total_rentals DESC
+  , genre
+LIMIT 5
