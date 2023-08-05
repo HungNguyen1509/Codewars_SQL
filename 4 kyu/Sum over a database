@@ -1,0 +1,31 @@
+CREATE OR REPLACE FUNCTION search_columns()
+RETURNS TABLE(schemaname text, tablename text, columnname text, total text)
+AS $$
+BEGIN
+  FOR schemaname, tablename, columnname IN
+    SELECT 
+      c.table_schema
+      , c.table_name
+      , c.column_name 
+    FROM information_schema.columns c
+    LEFT JOIN information_schema.tables t
+          ON  c.table_catalog = t.table_catalog
+          AND c.table_schema = t.table_schema
+          AND c.table_name = t.table_name
+    WHERE 
+      c.data_type = 'integer' 
+      AND c.table_schema NOT IN ('information_schema', 'pg_catalog')
+      AND t.table_type = 'BASE TABLE'
+  LOOP
+    FOR total IN
+      EXECUTE FORMAT('SELECT SUM(%I) AS %I FROM %I.%I', columnname, columnname, schemaname, tablename)
+    LOOP
+      RAISE NOTICE 'hit in %.%', schemaname, tablename;
+      RETURN NEXT
+    END LOOP
+  END LOOP
+END
+$$ LANGUAGE PLPGSQL;
+
+
+SELECT COALESCE((SELECT SUM(total :: INT) AS total FROM search_columns()), 0) AS total
