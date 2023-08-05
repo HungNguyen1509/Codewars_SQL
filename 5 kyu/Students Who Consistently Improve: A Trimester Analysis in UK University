@@ -1,0 +1,18 @@
+SELECT 
+    s.id AS student_id
+    , s.name 
+    , CONCAT(
+        'Michaelmas (', ROUND(AVG(CASE WHEN EXTRACT(MONTH FROM c.course_date) IN (10, 11, 12) THEN c.score END), 2), '), ',
+        'Lent (', ROUND(AVG(CASE WHEN EXTRACT(MONTH FROM c.course_date) IN (1, 2, 3) THEN c.score END), 2), '), ',
+        'Summer (', ROUND(AVG(CASE WHEN EXTRACT(MONTH FROM c.course_date) IN (4, 5, 6) THEN c.score END), 2), ')'
+    ) AS trimesters_avg_scores
+    , AVG(CASE WHEN EXTRACT(MONTH FROM c.course_date) IN (1, 2, 3) THEN c.score END) > AVG(CASE WHEN EXTRACT(MONTH FROM c.course_date) IN (10, 11, 12) THEN c.score END) AND
+    AVG(CASE WHEN EXTRACT(MONTH FROM c.course_date) IN (4, 5, 6) THEN c.score END) > AVG(CASE WHEN EXTRACT(MONTH FROM c.course_date) IN (1, 2, 3) THEN c.score END) AS consistent_improvement
+FROM students s 
+  JOIN courses c 
+  ON s.id = c.student_id 
+WHERE c.course_date BETWEEN '2022-10-01' AND '2023-06-30'
+GROUP BY 
+  s.id
+  , s.name
+ORDER BY s.id DESC
