@@ -1,0 +1,4 @@
+SELECT 
+  id
+  , CAST(last AS inet) - CAST(first AS inet) AS ips_between
+FROM ip_addresses
