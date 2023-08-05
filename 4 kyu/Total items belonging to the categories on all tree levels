@@ -1,0 +1,24 @@
+WITH recursive
+  cte_hierarchy(id, parent, item) AS (
+    SELECT 
+        a.id
+        , a.parent
+        , b.id
+    FROM
+      categories a
+      LEFT JOIN items b ON a.id = b.category_id
+    UNION ALL
+    SELECT 
+      b.id
+      , b.parent
+      , a.item
+    FROM
+      cte_hierarchy a 
+      join categories b ON a.parent = b.id
+  )
+select 
+  id
+  , COUNT(item) AS total
+FROM cte_hierarchy
+GROUP BY 1
+ORDER BY 1
