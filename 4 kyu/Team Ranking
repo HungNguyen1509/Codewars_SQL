@@ -1,0 +1,22 @@
+SELECT
+  RANK() OVER(ORDER BY SUM(score) DESC) AS team_rank
+  , t.name AS team_name
+  , SUM(score) AS team_score
+  , STRING_AGG(CONCAT(m.name, ' (', m.score, ')'), ', ' ORDER BY score DESC, m.id) AS top_members
+FROM teams t
+  JOIN (SELECT
+          team_id
+          , id
+          , name
+          , score
+          , RANK() OVER(PARTITION BY team_id ORDER BY score DESC, id) AS member_rank
+        FROM team_members) m
+  ON t.id = m.team_id
+WHERE m.member_rank <= 5
+GROUP BY 
+  t.name
+  , t.id
+ORDER BY 
+  team_score DESC
+  , t.id
+LIMIT 10
