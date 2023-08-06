@@ -1,0 +1,7 @@
+SELECT 
+  CAST(created_at AS DATE) AS date
+  , CAST(COUNT(ID) AS INT) AS count
+  , CAST(SUM(count(ID)) OVER(ORDER BY CAST(created_at AS DATE)) AS INT) AS total
+FROM posts
+GROUP BY date
+ORDER BY date
