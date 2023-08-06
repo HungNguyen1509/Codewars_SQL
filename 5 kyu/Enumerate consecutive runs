@@ -1,0 +1,20 @@
+WITH enumerate_table AS(
+  SELECT
+    id
+    , value
+    , CASE
+        WHEN
+            id = 1
+            OR id - LAG(id) OVER(ORDER BY id) <> 1
+            OR value <> LAG(value) OVER(ORDER BY id)
+        THEN 1
+        ELSE 0
+      END
+    AS run_id FROM entries
+)
+
+SELECT
+  id
+  , value
+  , SUM(run_id) OVER(ORDER by id) AS run_id
+FROM enumerate_table
