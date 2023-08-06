@@ -1,0 +1,14 @@
+SELECT 
+  film_id
+  , title
+  , special_features
+FROM (SELECT 
+        film_id
+        , title
+        , special_features
+        , COUNT(*) OVER (PARTITION BY ARRAY(SELECT unnest(special_features) ORDER BY 1)) AS feature_count
+      FROM film) a
+WHERE feature_count = 1
+ORDER BY 
+  title
+  , film_id
