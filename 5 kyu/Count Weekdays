@@ -1,0 +1,8 @@
+CREATE OR REPLACE FUNCTION weekdays(_start date, _finish date) 
+RETURNS INTEGER
+AS
+$$
+  SELECT COUNT(*) FILTER (WHERE EXTRACT(dow FROM g.d) BETWEEN 1 AND 5)::INT AS weekdays
+  FROM generate_series(LEAST(_start, _finish), GREATEST(_start, _finish), INTERVAL '1 day') AS g(d);
+
+$$ language sql
