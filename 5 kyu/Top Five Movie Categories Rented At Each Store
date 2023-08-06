@@ -1,0 +1,32 @@
+WITH category_rentals AS (
+  SELECT 
+    i.store_id
+    , c.name AS category
+    , COUNT(*) AS num_rentals
+    , RANK() OVER (PARTITION BY i.store_id ORDER BY COUNT(*) DESC, c.name) AS category_rank
+  FROM rental r
+    JOIN inventory i
+      ON r.inventory_id = i.inventory_id
+    JOIN film_category fc
+      ON i.film_id = fc.film_id
+    JOIN category c
+      ON fc.category_id = c.category_id
+    JOIN store s
+      ON i.store_id = s.store_id
+  GROUP BY
+    i.store_id
+    , c.name
+)
+
+SELECT 
+  store_id
+  , category
+  , num_rentals
+FROM
+  category_rentals
+WHERE
+  category_rank <= 5
+ORDER BY 
+  store_id
+  , num_rentals DESC
+  , category
