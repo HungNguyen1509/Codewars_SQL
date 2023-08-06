@@ -1,0 +1,9 @@
+SELECT
+  CAST(TO_CHAR(DATE_TRUNC('month', created_at),'yyyy-mm-dd') AS DATE) AS date
+  , COUNT(*) AS count
+  , ROUND((COUNT(*) - LAG(COUNT(*)) OVER (ORDER BY DATE_TRUNC('month', created_at)))::numeric / LAG(COUNT(*)) OVER (ORDER BY DATE_TRUNC('month', created_at)) * 100, 1)::text || '%' AS percent_growth
+FROM posts
+GROUP BY 
+  DATE_TRUNC('month', created_at)
+ORDER BY 
+  DATE_TRUNC('month', created_at)
