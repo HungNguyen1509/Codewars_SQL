@@ -1,0 +1,20 @@
+SELECT
+  m.film_id,
+  , m.title AS film_title
+  , MODE() WITHIN GROUP (ORDER BY to_char(r.rental_date, 'DY')) AS most_popular_day_of_week
+FROM category c
+  JOIN film_category fc 
+    ON c.category_id = fc.category_id
+  JOIN film m 
+    ON fc.film_id = m.film_id
+  JOIN inventory i 
+    ON m.film_id = i.film_id
+  JOIN rental r 
+    ON i.inventory_id = r.inventory_id
+WHERE c.name = 'Action'
+GROUP BY
+  m.film_id
+  , film_title
+ORDER BY 
+  film_title
+  , m.film_id
