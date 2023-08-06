@@ -1,0 +1,15 @@
+SELECT 
+  RANK() over (ORDER BY SUM(c.score) DESC, c.student_id ASC)
+  , c.student_id
+  , s.name
+  , SUM(c.score) AS total_score             
+FROM courses c
+  JOIN students s
+  ON c.student_id = s.id
+WHERE course_name = 'Math' OR course_name = 'Science'
+GROUP BY 
+  s.name
+  , c.student_id
+ORDER BY
+  total_score DESC
+  , c.student_id ASC
