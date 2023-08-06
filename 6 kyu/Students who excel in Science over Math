@@ -1,0 +1,14 @@
+SELECT 
+  c1.student_id AS student_id
+  , s.name
+  , c2.score - c1.score AS score_difference
+FROM courses c1 
+  JOIN courses c2 
+    ON c1.student_id = c2.student_id
+  JOIN students s 
+    ON c1.student_id = s.id
+WHERE c1.course_name = 'Math'
+    AND c2.course_name = 'Science' AND c1.score - c2.score < 0
+ORDER BY 
+  score_difference DESC
+  , c1.student_id ASC
