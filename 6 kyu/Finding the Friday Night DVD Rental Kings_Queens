@@ -1,0 +1,19 @@
+SELECT 
+  c.customer_id
+  , CONCAT(c.first_name, ' ', c.last_name) AS customer_name
+  , COUNT(r.rental_id) AS friday_rentals
+  , STRING_AGG(r.rental_date::text, ', ' ORDER BY r.rental_date DESC) AS rental_dates
+FROM customer c
+  JOIN rental r 
+    ON c.customer_id = r.customer_id
+WHERE 
+  EXTRACT(DOW FROM r.rental_date) = 5
+  AND EXTRACT(HOUR FROM r.rental_date) >= 18
+  AND EXTRACT(HOUR FROM r.rental_date) <= 23
+GROUP BY 
+  c.customer_id
+  , customer_name
+ORDER BY
+  friday_rentals DESC
+  , c.last_name
+LIMIT 50
