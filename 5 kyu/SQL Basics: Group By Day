@@ -1,0 +1,10 @@
+SELECT 
+  date(created_at) AS day
+  , description
+  , COUNT(created_at) AS count
+FROM events
+WHERE name = 'trained'
+GROUP BY 
+  day
+  , description
+ORDER BY day
