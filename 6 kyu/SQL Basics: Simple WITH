@@ -1,0 +1,19 @@
+WITH special_sales AS (
+  SELECT 
+    id
+    , department_id
+    , name
+    , price
+    , card_name
+    , card_number
+    , transaction_date
+  FROM sales
+  WHERE price > '90.00')
+SELECT 
+  id
+  , name
+FROM departments
+WHERE id IN (SELECT 
+                department_id
+             FROM
+                special_sales)
