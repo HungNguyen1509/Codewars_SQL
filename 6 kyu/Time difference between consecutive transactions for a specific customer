@@ -1,0 +1,19 @@
+WITH previous_rental AS (
+  SELECT 
+    rental_id
+    , customer_id
+    , rental_date AS rental_date
+    , LAG(rental_date) OVER (PARTITION BY customer_id ORDER BY rental_date) AS previous_rental_date
+  FROM rental
+  WHERE customer_id IN (1, 2)
+)
+
+SELECT 
+  rental_id
+  , customer_id
+  , TO_CHAR(rental_date,'yyyy-mm-dd hh24:mi:ss') AS rental_date
+  , rental_date - previous_rental_date AS time_since_previous_rental
+FROM previous_rental
+ORDER BY 
+  customer_id
+  , rental_date
