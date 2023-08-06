@@ -1,0 +1,48 @@
+WITH RECURSIVE t(id, user_id, name) AS (
+  SELECT 
+    DISTINCT 0
+    , user_id
+    , ''  
+  FROM attempts 
+  UNION ALL
+  SELECT * 
+  FROM (
+        WITH t_inner AS (SELECT * 
+                          FROM t),
+                t_max AS (SELECT id
+                          FROM t_inner
+                          LIMIT 1),
+              next_id AS (
+                          SELECT 
+                            MIN(attempts.id) AS min_id
+                          FROM attempts
+                          JOIN t_max 
+                             ON attempts.id > t_max.id
+                           LEFT JOIN t_inner
+                             ON attempts.name = t_inner.name
+                          WHERE t_inner.name is null
+      )
+
+SELECT
+  next_id.min_id
+  , t_inner.user_id
+  , COALESCE(attempts.name, t_inner.name)
+FROM t_inner
+  CROSS JOIN next_id
+  LEFT JOIN attempts 
+    ON (attempts.id = next_id.min_id) 
+    AND (attempts.user_id = t_inner.user_id)
+WHERE min_id is not null
+    ) AS t2
+)
+
+SELECT
+  t.user_id
+  , t.name
+FROM t
+  INNER JOIN (SELECT MAX(id) AS id
+                 FROM t) max_id
+     ON max_id.id = t.id
+ORDER BY 
+  t.user_id
+  , t.name
