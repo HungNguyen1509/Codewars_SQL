@@ -1,0 +1,27 @@
+SELECT 
+  CONCAT(a1.first_name, ' ', a1.last_name) AS second_actor
+  , CONCAT(a2.first_name, ' ', a2.last_name) AS first_actor
+  , f.title
+FROM (SELECT 
+        r1.actor_id AS actor_a_id 
+        , r2.actor_id AS actor_b_id
+        , COUNT(r1.film_id) AS casted_together
+        , ARRAY_AGG(r1.film_id) AS film_ids
+      FROM film_actor r1 
+      JOIN film_actor r2 
+        ON r1.film_id = r2.film_id
+           AND r1.actor_id > r2.actor_id
+      JOIN film f
+        ON r1.film_id = f.film_id
+      GROUP BY 
+        r1.actor_id
+        , r2.actor_id
+      ORDER BY casted_together DESC
+      LIMIT 1
+    ) s
+  JOIN actor a1 
+    ON a1.actor_id = s.actor_a_id
+  JOIN actor a2 
+    ON a2.actor_id = s.actor_b_id
+  JOIN film f 
+    ON f.film_id = any(s.film_ids)
