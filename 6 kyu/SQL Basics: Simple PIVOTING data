@@ -1,0 +1,29 @@
+CREATE EXTENSION tablefunc;
+
+SELECT 
+  crosstab.name,
+  , crosstab.good,
+  , crosstab.ok,
+  , crosstab.bad
+FROM crosstab(
+    $$
+    SELECT 
+      , products.name
+      , details.detail
+      , COUNT(details.detail)
+    FROM products
+      JOIN details
+        ON details.product_id = products.id
+    GROUP BY 
+      products.name
+      , details.detail
+    ORDER BY products.name
+    $$,
+    $$
+    SELECT 
+      details.detail
+    FROM details 
+    GROUP BY details.detail
+    $$)
+AS crosstab (name TEXT, ok INTEGER, good INTEGER, bad INTEGER)
+ORDER BY name
