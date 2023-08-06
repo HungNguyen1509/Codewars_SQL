@@ -1,0 +1,5 @@
+SELECT MIN(score) AS min, CAST( ((SELECT MIN(score) FROM (SELECT score FROM result ORDER BY score DESC LIMIT 50) top_half)
+        +
+       (SELECT MAX(score) FROM (SELECT score FROM result ORDER BY score ASC LIMIT 50) bottom_half)) / 2 AS FLOAT) AS Median, MAX(score) AS max
+
+FROM result
