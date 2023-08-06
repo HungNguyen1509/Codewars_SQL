@@ -1,0 +1,12 @@
+SELECT
+  y2.country
+  , CONCAT(ROUND((y2.population - y1.population) / 1000000.0, 2), ' M') AS population_increase
+FROM world_population y2
+  JOIN world_population y1
+    ON y2.country = y1.country
+WHERE
+  y2.year = 2020 
+  AND y1.year = 2000
+ORDER BY
+  y2.population - y1.population DESC
+LIMIT 5
