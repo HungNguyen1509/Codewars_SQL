@@ -1,0 +1,9 @@
+SELECT title
+FROM film
+  JOIN film_actor Sidney_Crowe 
+    ON Sidney_Crowe.film_id = film.film_id
+    AND Sidney_Crowe.actor_id = 105
+  JOIN film_actor Salma_Nolte
+    ON Salma_Nolte.film_id = film.film_id
+    AND Salma_Nolte.actor_id = 122
+ORDER BY title
