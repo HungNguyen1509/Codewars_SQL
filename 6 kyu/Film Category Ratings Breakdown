@@ -1,0 +1,23 @@
+SELECT 
+  c.name AS category_name
+  , f.rating AS film_rating
+  , ROUND(COUNT(f.film_id)*100/(sum(count(*)) OVER(PARTITION BY total_films.category_id)),3) AS percentage
+FROM film_category fc
+  JOIN film f 
+    ON fc.film_id = f.film_id
+  JOIN category c 
+    ON fc.category_id = c.category_id
+  JOIN (SELECT
+          category_id
+          , COUNT(film_id) AS total_count
+        FROM film_category
+        GROUP BY category_id) AS total_films 
+     ON fc.category_id = total_films.category_id
+GROUP BY 
+  c.name 
+  , f.rating
+  , total_films.category_id
+ORDER BY 
+  c.name ASC
+  , percentage DESC
+  , f.rating ASC
