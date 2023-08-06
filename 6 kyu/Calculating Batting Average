@@ -1,0 +1,6 @@
+SELECT 
+  player_name
+  , games
+  , CAST(CAST((hits * 1.0 / at_bats) AS DECIMAL(3, 3)) AS TEXT) AS batting_average
+FROM yankees WHERE at_bats >= '100'
+ORDER BY batting_average DESC
