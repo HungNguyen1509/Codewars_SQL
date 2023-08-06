@@ -1,0 +1,13 @@
+SELECT 
+  CAST (s.transaction_date AS DATE) AS day
+  , CAST (d.name AS TEXT) AS department
+  , CAST (COUNT(s.id) AS INT) AS sale_count
+FROM department d
+  JOIN sale s 
+    ON s.department_id = d.id
+GROUP BY
+  day
+  , department
+ORDER BY 
+  day
+  , department
