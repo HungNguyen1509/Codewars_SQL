@@ -1,0 +1,21 @@
+SELECT 
+  s.id AS student_id
+  , s.name
+  , STRING_AGG(CONCAT(c.course_name,' (', ROUND(((c.score-average.score)/average.score)*100,2),'%)'),', ' ORDER BY c.course_name)
+       AS outperformance
+FROM students s
+  JOIN courses c
+    ON s.id = c.student_id
+  JOIN (SELECT 
+          course_name
+          , AVG(score) AS score
+        FROM courses
+        GROUP BY course_name
+          ) average 
+    ON c.course_name = average.course_name
+WHERE c.score > average.score
+GROUP BY 
+  s.name
+  , s.id
+HAVING COUNT (*) >=3
+ORDER BY s.id ASC
