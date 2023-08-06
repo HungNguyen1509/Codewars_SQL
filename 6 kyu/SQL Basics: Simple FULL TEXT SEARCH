@@ -1,0 +1,7 @@
+SELECT 
+  id
+  , name
+  , price
+FROM product AS full_text_search
+WHERE TO_TSVECTOR(name) @@ TO_TSQUERY('Awesome')
+ORDER BY id
