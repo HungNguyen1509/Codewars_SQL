@@ -1,0 +1,6 @@
+SELECT 
+  date(o1.date) AS date
+  , SUM(SUM(amount)) OVER (ORDER BY date(o1.date)) AS balance
+FROM operations o1
+GROUP BY date(o1.date)
+ORDER BY date(o1.date) ASC
