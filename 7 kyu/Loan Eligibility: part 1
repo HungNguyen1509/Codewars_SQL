@@ -1,0 +1,13 @@
+SELECT 
+  c.id AS customer_id
+  , CASE 
+      WHEN c.age BETWEEN 18 AND 65 
+        AND count(l.id) = 0 
+      THEN 'loan can be given' ELSE  'loan cannot be given'
+    END AS loan_eligibility
+FROM customers c
+  LEFT JOIN loans l
+    ON l.customer_id = c.id AND loan_status = 'unpaid'
+WHERE c.id BETWEEN 1 AND 10
+GROUP BY c.id
+ORDER BY 1 DESC
