@@ -1,0 +1,10 @@
+SELECT 
+  p.name
+  , COUNT(d.detail) FILTER (WHERE d.detail = 'good') AS good
+  , COUNT(d.detail) FILTER (WHERE d.detail = 'ok') AS ok
+  , COUNT(d.detail) FILTER (WHERE d.detail = 'bad') AS bad
+FROM products p
+  JOIN details d
+    ON p.id = d.product_id
+GROUP BY p.name
+ORDER BY p.name ASC
