@@ -1,0 +1,6 @@
+SELECT 
+  TRIM(CONCAT(REVERSE(SPLIT_PART(REVERSE(name), ' ', 4)), ' '
+  , REVERSE(SPLIT_PART(REVERSE(name), ' ', 3)))) AS name
+  , REVERSE(SPLIT_PART(REVERSE(name), ' ', 2)) AS first_lastname
+  , REVERSE(SPLIT_PART(REVERSE(name), ' ', 1)) AS second_lastname
+FROM people
