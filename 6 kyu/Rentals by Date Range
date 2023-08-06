@@ -1,0 +1,8 @@
+SELECT 
+  date::date::text
+  , COUNT(rental_id) AS rentals
+FROM generate_series(date '2005-05-24', date '2005-06-02', interval  '1 day') t(date)
+  LEFT JOIN rental 
+    ON rental_date::date = date
+GROUP BY date
+ORDER BY date
