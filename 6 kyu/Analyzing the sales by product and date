@@ -1,0 +1,17 @@
+SELECT 
+  p.name AS product_name, 
+  , CAST (EXTRACT (YEAR FROM s.date) AS INT) AS year
+  , CAST (EXTRACT (MONTH FROM s.date) AS INT) AS month
+  , CAST (EXTRACT (DAY FROM s.date) AS INT) AS day
+  , SUM(p.price*sd.count) AS total
+FROM sales_details sd
+  JOIN sales s
+    ON sd.sale_id = s.id
+  JOIN products p
+    ON sd.product_id = p.id
+GROUP BY GROUPING SETS (1,(1,2),(1,2,3),(1,2,3,4))
+ORDER BY 
+  product_name
+  , year
+  , month
+  , day
