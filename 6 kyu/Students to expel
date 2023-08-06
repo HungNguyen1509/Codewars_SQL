@@ -1,0 +1,20 @@
+SELECT
+  s.id AS student_id
+  , s.name
+  CASE
+    WHEN c.student_id IS NULL THEN 'quit studying'
+    ELSE CONCAT('failed in ', STRING_AGG(c.course_name || '(' || c.score || ')', ', ' order by c.course_name))
+  END AS reason
+FROM students s
+  LEFT JOIN courses c 
+    ON s.id = c.student_id 
+WHERE c.student_id is null or c.score < 60
+GROUP BY
+  s.id
+  , s.name
+  , c.student_id
+HAVING
+  count(c.id) = 0 
+  OR count(c.id) >= 3
+ORDER BY
+  s.id ASC
