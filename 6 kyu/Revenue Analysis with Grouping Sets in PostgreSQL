@@ -1,0 +1,16 @@
+SELECT 
+  CAST(EXTRACT (YEAR FROM p.payment_date) AS INT) AS YEAR
+  , CAST(EXTRACT (MONTH FROM p.payment_date) AS INT) AS MONTH
+  , c.name AS category
+  , CAST(FLOOR(SUM(p.amount)) AS INT) AS revenue
+FROM payment p
+  LEFT JOIN rental r
+    ON p.rental_id = r.rental_id
+  LEFT JOIN inventory i
+    ON r.inventory_id = i.inventory_id
+  LEFT JOIN film_category f
+    ON i.film_id = f.film_id
+  LEFT JOIN category c
+    ON f.category_id = c.category_id     
+GROUP BY GROUPING SETS ((year), (year, month), (year, month, category))
+ORDER BY MONTH ASC, revenue DESC, category ASC
