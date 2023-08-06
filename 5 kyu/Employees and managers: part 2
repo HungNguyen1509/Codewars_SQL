@@ -1,0 +1,21 @@
+WITH RECURSIVE management(id, name, management_chain) AS (
+  SELECT 
+    id
+    , name
+    , '' AS management_chain
+  FROM employees
+  WHERE manager_id is null
+  UNNION ALL
+  SELECT 
+    e.id
+    , e.name
+    , trim(' -> ' from m.management_chain || ' -> ' || m.name || ' (' || m.id || ')') AS management_chain
+  FROM 
+    employees e
+    , management m
+  WHERE e.manager_id = m.id
+)
+
+SELECT * 
+FROM management 
+ORDER BY id
