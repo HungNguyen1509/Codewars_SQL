@@ -1,0 +1,12 @@
+SELECT 
+  id
+  , info ->> 'name' AS user_name
+  , string_agg(pet ->> 'name', ', ' ORDER BY idx) AS pet_names
+FROM 
+  users
+  , jsonb_array_elements(info-> 'pets') WITH ORDINALITY AS pet(pet,idx)
+WHERE pet ->> 'name' LIKE 'M%'
+GROUP BY 
+  id
+  , user_name
+ORDER BY id ASC
